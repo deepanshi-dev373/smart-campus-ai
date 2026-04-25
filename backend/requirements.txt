@@ -1,5 +1,6 @@
 flask
+requests
+matplotlib
 opencv-python
-face-recognition
 numpy
-pandas
+gunicorn
