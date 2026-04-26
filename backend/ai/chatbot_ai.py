@@ -1,4 +1,4 @@
 def chatbot_reply(msg):
     if "hello" in msg.lower():
-        return "Hello student 👋"
-    return "Ask something about campus"
+        return "Hello 👋"
+    return "Ask campus related question"
