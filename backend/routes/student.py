@@ -1,45 +1,23 @@
-from flask import Blueprint, request, jsonify
-import sqlite3
+from flask import Blueprint, render_template, request
 
 student_routes = Blueprint('student', __name__)
 
-def db():
-    return sqlite3.connect("campus.db")
+@student_routes.route('/student/dashboard')
+def dashboard():
+    return render_template("student.html")
 
-# ADD STUDENT
-@student_routes.route('/add_student', methods=['POST'])
-def add_student():
-    data = request.json
-    conn = db()
-    cur = conn.cursor()
+@student_routes.route('/student/attendance')
+def attendance():
+    return {"attendance": "85%"}
 
-    cur.execute("INSERT INTO students(name, course, semester) VALUES(?,?,?)",
-                (data['name'], data['course'], data['semester']))
+@student_routes.route('/student/fees')
+def fees():
+    return {"fees": "Paid ✅"}
 
-    conn.commit()
-    conn.close()
-    return {"msg": "Student Added"}
+@student_routes.route('/student/complaint', methods=['POST'])
+def complaint():
+    return {"msg": "Complaint submitted"}
 
-# GET STUDENTS
-@student_routes.route('/students')
-def get_students():
-    conn = db()
-    cur = conn.cursor()
-
-    cur.execute("SELECT * FROM students")
-    data = cur.fetchall()
-
-    conn.close()
-    return jsonify(data)
-
-# DELETE
-@student_routes.route('/delete_student/<int:id>')
-def delete(id):
-    conn = db()
-    cur = conn.cursor()
-
-    cur.execute("DELETE FROM students WHERE id=?", (id,))
-    conn.commit()
-    conn.close()
-
-    return {"msg": "Deleted"}
+@student_routes.route('/student/chat', methods=['POST'])
+def chat():
+    return {"msg": "Message sent to teacher"}
