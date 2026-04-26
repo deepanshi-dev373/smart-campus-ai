@@ -1,6 +1,6 @@
 flask
+gunicorn
 requests
 matplotlib
-opencv-python
 numpy
-gunicorn
+opencv-python
