@@ -1,14 +1,27 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, render_template, redirect, session
+import sqlite3
 
 auth_routes = Blueprint('auth', __name__)
 
-@auth_routes.route('/login', methods=['POST'])
-def login():
-    data = request.json
+def db():
+    return sqlite3.connect("campus.db")
 
-    if data['role'] == "admin":
-        return {"msg": "Admin Login"}
-    elif data['role'] == "teacher":
-        return {"msg": "Teacher Login"}
-    else:
-        return {"msg": "Student Login"}
+@auth_routes.route('/login', methods=['GET','POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        conn = db()
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users WHERE email=? AND password=?",(email,password))
+        user = cur.fetchone()
+        conn.close()
+
+        if user:
+            session['user'] = user[1]
+            return redirect('/dashboard')
+        else:
+            return "Invalid Login ❌"
+
+    return render_template("login.html")
