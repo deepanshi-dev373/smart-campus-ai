@@ -12,14 +12,29 @@
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
             text-align: center;
+            font-family: Arial, sans-serif;
         }
+
         .container {
-            margin-top: 100px;
+            margin-top: 80px;
         }
+
         .btn-custom {
             margin: 10px;
             padding: 12px 25px;
-            font-size: 18px;
+            font-size: 16px;
+            border-radius: 10px;
+        }
+
+        .card-box {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -28,21 +43,56 @@
 
 <div class="container">
 
-    <h1 class="display-4 fw-bold">🎓 Smart Campus AI</h1>
-    <p class="lead">AI Powered Campus Management System</p>
+    <div class="card-box">
 
-    <hr class="bg-white">
+        <h1>🎓 Smart Campus AI</h1>
+        <p class="lead">AI Powered Campus Management System</p>
 
-    <!-- Buttons -->
-    <a href="/login" class="btn btn-light btn-custom">🔐 Login System</a>
+        <hr style="background:white">
 
-    <a href="/student/dashboard" class="btn btn-success btn-custom">👩‍🎓 Student Dashboard</a>
+        <!-- MAIN BUTTONS -->
+        <a href="/login" class="btn btn-light btn-custom">🔐 Login</a>
 
-    <a href="/teacher/dashboard" class="btn btn-warning btn-custom">👨‍🏫 Teacher Dashboard</a>
+        <a href="/student/dashboard" class="btn btn-success btn-custom">👩‍🎓 Student</a>
 
-    <a href="/admin/dashboard" class="btn btn-danger btn-custom">🛠️ Admin Panel</a>
+        <a href="/teacher/dashboard" class="btn btn-warning btn-custom">👨‍🏫 Teacher</a>
+
+        <a href="/admin/dashboard" class="btn btn-danger btn-custom">🛠️ Admin</a>
+
+        <br><br>
+
+        <!-- FEATURES -->
+        <a href="/attendance" class="btn btn-info btn-custom">📸 Attendance</a>
+
+        <button onclick="chat()" class="btn btn-dark btn-custom">🤖 Chatbot</button>
+
+        <button onclick="risk()" class="btn btn-secondary btn-custom">⚠️ Risk Check</button>
+
+    </div>
 
 </div>
+
+<script>
+function chat(){
+    fetch('/chat',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({message:"hello"})
+    })
+    .then(res=>res.json())
+    .then(data=>alert(data.reply))
+}
+
+function risk(){
+    fetch('/risk',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({attendance:40})
+    })
+    .then(res=>res.json())
+    .then(data=>alert(data.risk))
+}
+</script>
 
 </body>
 </html>
