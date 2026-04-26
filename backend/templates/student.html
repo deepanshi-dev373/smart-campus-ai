@@ -9,40 +9,94 @@
 
 <div class="container mt-4">
 
-<h2>👩‍🎓 Student Dashboard</h2>
+<h2 class="mb-4">👩‍🎓 Student Dashboard</h2>
 
-<div class="row mt-4">
+<!-- STATS -->
+<div class="row text-center">
 
-<div class="col-md-4">
-<div class="card p-3">
-<h5>📊 Attendance</h5>
-<p>View your attendance</p>
-<button class="btn btn-success" onclick="checkAttendance()">Check</button>
+<div class="col-md-3">
+<div class="card p-3 bg-primary text-white">
+<h5>Total Students</h5>
+<h3>120</h3>
 </div>
 </div>
 
-<div class="col-md-4">
-<div class="card p-3">
-<h5>⚠️ Risk Status</h5>
-<button class="btn btn-warning" onclick="risk()">Check Risk</button>
+<div class="col-md-3">
+<div class="card p-3 bg-success text-white">
+<h5>Attendance</h5>
+<h3>85%</h3>
 </div>
 </div>
 
-<div class="col-md-4">
-<div class="card p-3">
-<h5>🤖 Chatbot</h5>
-<button class="btn btn-dark" onclick="chat()">Ask</button>
+<div class="col-md-3">
+<div class="card p-3 bg-warning text-dark">
+<h5>Risk Level</h5>
+<h3>Low</h3>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card p-3 bg-danger text-white">
+<h5>Pending Tasks</h5>
+<h3>2</h3>
 </div>
 </div>
 
 </div>
 
 <br>
+
+<!-- FEATURES -->
+<div class="row">
+
+<div class="col-md-4">
+<div class="card p-3">
+<h5>📸 Attendance</h5>
+<button class="btn btn-success" onclick="attendance()">Check</button>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-3">
+<h5>🤖 AI Chatbot</h5>
+<button class="btn btn-dark" onclick="chat()">Ask</button>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-3">
+<h5>⚠️ Risk Predictor</h5>
+<button class="btn btn-warning" onclick="risk()">Check</button>
+</div>
+</div>
+
+</div>
+
+<br>
+
+<!-- NOTICES -->
+<div class="card p-3">
+<h5>📢 Latest Notices</h5>
+<ul>
+<li>📅 Exam starts next week</li>
+<li>📢 Assignment submission tomorrow</li>
+<li>🎯 Attendance mandatory</li>
+</ul>
+</div>
+
+<br>
+
 <a href="/" class="btn btn-secondary">⬅ Back</a>
 
 </div>
 
 <script>
+function attendance(){
+ fetch('/attendance')
+ .then(res=>res.text())
+ .then(data=>alert(data))
+}
+
 function chat(){
  fetch('/chat',{
   method:'POST',
@@ -61,12 +115,6 @@ function risk(){
  })
  .then(res=>res.json())
  .then(data=>alert(data.risk))
-}
-
-function checkAttendance(){
- fetch('/attendance')
- .then(res=>res.text())
- .then(data=>alert(data))
 }
 </script>
 
