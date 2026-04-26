@@ -6,9 +6,6 @@ from routes.admin import admin_routes
 from routes.chatbot import chatbot_routes
 from routes.attendance import attendance_routes
 from routes.risk import risk_routes
-from routes.attendance import attendance_routes
-
-app.register_blueprint(attendance_routes)
 
 app = Flask(__name__)
 
