@@ -1,122 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Student Dashboard</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body class="bg-light">
-
-<div class="container mt-4">
-
-<h2 class="mb-4">👩‍🎓 Student Dashboard</h2>
-
-<!-- STATS -->
-<div class="row text-center">
-
-<div class="col-md-3">
-<div class="card p-3 bg-primary text-white">
-<h5>Total Students</h5>
-<h3>120</h3>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card p-3 bg-success text-white">
-<h5>Attendance</h5>
-<h3>85%</h3>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card p-3 bg-warning text-dark">
-<h5>Risk Level</h5>
-<h3>Low</h3>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card p-3 bg-danger text-white">
-<h5>Pending Tasks</h5>
-<h3>2</h3>
-</div>
-</div>
-
-</div>
-
-<br>
-
-<!-- FEATURES -->
-<div class="row">
-
-<div class="col-md-4">
-<div class="card p-3">
-<h5>📸 Attendance</h5>
-<button class="btn btn-success" onclick="attendance()">Check</button>
-</div>
-</div>
-
-<div class="col-md-4">
-<div class="card p-3">
-<h5>🤖 AI Chatbot</h5>
-<button class="btn btn-dark" onclick="chat()">Ask</button>
-</div>
-</div>
-
-<div class="col-md-4">
-<div class="card p-3">
-<h5>⚠️ Risk Predictor</h5>
-<button class="btn btn-warning" onclick="risk()">Check</button>
-</div>
-</div>
-
-</div>
-
-<br>
-
-<!-- NOTICES -->
-<div class="card p-3">
-<h5>📢 Latest Notices</h5>
-<ul>
-<li>📅 Exam starts next week</li>
-<li>📢 Assignment submission tomorrow</li>
-<li>🎯 Attendance mandatory</li>
-</ul>
-</div>
-
-<br>
-
-<a href="/" class="btn btn-secondary">⬅ Back</a>
-
-</div>
+<h4>Add Student</h4>
+<input id="name" placeholder="Name">
+<input id="course" placeholder="Course">
+<input id="sem" placeholder="Semester">
+<button onclick="add()">Add</button>
 
 <script>
-function attendance(){
- fetch('/attendance')
- .then(res=>res.text())
- .then(data=>alert(data))
-}
-
-function chat(){
- fetch('/chat',{
+function add(){
+ fetch('/add_student',{
   method:'POST',
   headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({message:"hello"})
+  body:JSON.stringify({
+   name:document.getElementById("name").value,
+   course:document.getElementById("course").value,
+   semester:document.getElementById("sem").value
+  })
  })
  .then(res=>res.json())
- .then(data=>alert(data.reply))
-}
-
-function risk(){
- fetch('/risk',{
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({attendance:40})
- })
- .then(res=>res.json())
- .then(data=>alert(data.risk))
+ .then(data=>alert(data.msg))
 }
 </script>
-
-</body>
-</html>
