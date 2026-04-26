@@ -1,7 +1,53 @@
 <!DOCTYPE html>
 <html>
-<body>
-<h2>Teacher Dashboard 👨‍🏫</h2>
-<a href="/">Back</a>
+<head>
+<title>Teacher Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-4">
+
+<h2>👨‍🏫 Teacher Dashboard</h2>
+
+<div class="row">
+
+<div class="col-md-4">
+<div class="card p-3">
+<h5>📸 Mark Attendance</h5>
+<button class="btn btn-primary" onclick="mark()">Mark</button>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-3">
+<h5>📢 Send Notice</h5>
+<button class="btn btn-warning">Send</button>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-3">
+<h5>📊 Analytics</h5>
+<button class="btn btn-success">View</button>
+</div>
+</div>
+
+</div>
+
+<br>
+<a href="/" class="btn btn-secondary">⬅ Back</a>
+
+</div>
+
+<script>
+function mark(){
+ fetch('/attendance')
+ .then(res=>res.text())
+ .then(data=>alert(data))
+}
+</script>
+
 </body>
 </html>
