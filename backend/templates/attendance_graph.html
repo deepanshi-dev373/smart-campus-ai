@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Attendance Graph</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<h2>📊 Attendance Graph</h2>
+
+<canvas id="chart"></canvas>
+
+<!-- DATA SAFE FORMAT -->
+<script id="chart-data" type="application/json">
+{{ data | tojson }}
+</script>
+
+<script>
+const rawData = document.getElementById("chart-data").textContent;
+const parsed = JSON.parse(rawData);
+
+const names = parsed.map(d => d[0]);
+const att = parsed.map(d => d[1]);
+
+new Chart(document.getElementById("chart"), {
+    type: 'bar',
+    data: {
+        labels: names,
+        datasets: [{
+            label: 'Attendance',
+            data: att
+        }]
+    },
+    options: {
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+</script>
+
+</body>
+</html>

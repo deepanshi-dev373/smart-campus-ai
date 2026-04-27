@@ -1,10 +1,45 @@
-<h2>Teacher Panel</h2>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Teacher</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 
-<a href="/students">View Students</a><br>
-<a href="/notice">Send Notice</a>
+<body class="bg-light">
 
-<h3>AI Notice Generator</h3>
-<form method="POST" action="/ai_notice">
-<input name="topic" placeholder="Enter Topic">
-<button>Generate</button>
-</form>
+<div class="container mt-5 text-center">
+
+<h2>👨‍🏫 Teacher Dashboard</h2>
+
+<div class="row mt-4">
+
+<div class="col-md-4">
+<a href="/students" class="text-decoration-none">
+<div class="card p-3 shadow">
+<h5>Mark Attendance</h5>
+</div>
+</a>
+</div>
+
+<div class="col-md-4">
+<a href="/notice" class="text-decoration-none">
+<div class="card p-3 shadow">
+<h5>Send Notice</h5>
+</div>
+</a>
+</div>
+
+<div class="col-md-4">
+<a href="/student" class="text-decoration-none">
+<div class="card p-3 shadow">
+<h5>View Students</h5>
+</div>
+</a>
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -2,80 +2,78 @@
 <html>
 <head>
 <title>Admin Dashboard</title>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body { background:#f5f7fa; }
+.navbar { background:#4facfe; color:white; }
+.card { border-radius:15px; }
+</style>
+
 </head>
 
-<body class="bg-light">
+<body>
+
+<nav class="navbar p-3">
+<h4>🎓 Admin Panel</h4>
+</nav>
 
 <div class="container mt-4">
 
-<h2 class="text-center">🎓 Smart Campus Admin</h2>
-
-<div class="row text-center mt-4">
+<div class="row text-center">
 
 <div class="col-md-3">
 <div class="card p-3 shadow">
-<h5>Students</h5>
-<h3>{{ students }}</h3>
-</div>
-</div>
-
-<div class="col-md-3">
-<div class="card p-3 shadow">
-<h5>Teachers</h5>
-<h3>{{ teachers }}</h3>
+<h6>Students</h6>
+<h2>{{ students }}</h2>
 </div>
 </div>
 
 <div class="col-md-3">
 <div class="card p-3 shadow">
-<h5>Attendance</h5>
-<h3 id="att">{{ attendance }}</h3>
+<h6>Teachers</h6>
+<h2>{{ teachers }}</h2>
 </div>
 </div>
 
 <div class="col-md-3">
 <div class="card p-3 shadow">
-<h5>Pending Fees</h5>
-<h3>{{ fees }}</h3>
+<h6>Attendance</h6>
+<h2>{{ attendance }}</h2>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card p-3 shadow">
+<h6>Fees Pending</h6>
+<h2>{{ fees }}</h2>
 </div>
 </div>
 
 </div>
 
-<div class="card mt-4 p-3 shadow">
-<canvas id="chart"></canvas>
+<!-- 🔥 ACTION BUTTONS -->
+<div class="text-center mt-4">
+
+<a href="/students" class="btn btn-primary m-2">Manage Students</a>
+
+<a href="/notice" class="btn btn-warning m-2">Notices</a>
+
+<a href="/attendance_graph" class="btn btn-info m-2">📊 Attendance Graph</a>
+
+<a href="/chatbot" class="btn btn-success m-2">🤖 AI Chatbot</a>
+
 </div>
 
 <h4 class="mt-4">Latest Notices</h4>
-<ul>
+<ul class="list-group">
 {% for n in notices %}
-<li>{{ n[0] }}</li>
+<li class="list-group-item">{{ n[0] }}</li>
 {% endfor %}
 </ul>
 
-<div class="mt-4 text-center">
-<a href="/students" class="btn btn-primary">Students</a>
-<a href="/notice" class="btn btn-warning">Notice</a>
 </div>
-
-</div>
-
-<script>
-const att = Number(document.getElementById("att").innerText);
-
-new Chart(document.getElementById("chart"), {
-    type: 'bar',
-    data: {
-        labels: ['Attendance'],
-        datasets: [{
-            label: 'Average',
-            data: [att]
-        }]
-    }
-});
-</script>
 
 </body>
 </html>

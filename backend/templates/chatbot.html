@@ -1,0 +1,14 @@
+<input id="msg">
+<button onclick="send()">Send</button>
+<p id="reply"></p>
+
+<script>
+function send(){
+ let msg=document.getElementById("msg").value;
+ fetch('/ask',{method:'POST',
+ headers:{'Content-Type':'application/x-www-form-urlencoded'},
+ body:'msg='+msg})
+ .then(r=>r.text())
+ .then(d=>document.getElementById("reply").innerText=d)
+}
+</script>
