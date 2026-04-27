@@ -1,23 +1,31 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, request, render_template, redirect
+import sqlite3
 
 student_routes = Blueprint('student', __name__)
 
-@student_routes.route('/student/dashboard')
-def dashboard():
-    return render_template("student.html")
+def db():
+    return sqlite3.connect("campus.db")
 
-@student_routes.route('/student/attendance')
-def attendance():
-    return {"attendance": "85%"}
+@student_routes.route('/students')
+def students():
+    conn = db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM students")
+    data = cur.fetchall()
+    conn.close()
+    return render_template("students.html", data=data)
 
-@student_routes.route('/student/fees')
-def fees():
-    return {"fees": "Paid ✅"}
+@student_routes.route('/add_student', methods=['POST'])
+def add_student():
+    name = request.form['name']
+    course = request.form['course']
+    semester = request.form['semester']
 
-@student_routes.route('/student/complaint', methods=['POST'])
-def complaint():
-    return {"msg": "Complaint submitted"}
+    conn = db()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO students(name,course,semester,attendance) VALUES(?,?,?,0)",
+                (name,course,semester))
+    conn.commit()
+    conn.close()
 
-@student_routes.route('/student/chat', methods=['POST'])
-def chat():
-    return {"msg": "Message sent to teacher"}
+    return redirect('/students')

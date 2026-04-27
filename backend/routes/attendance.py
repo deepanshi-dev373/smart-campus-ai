@@ -1,7 +1,17 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
+import sqlite3
 
 attendance_routes = Blueprint('attendance', __name__)
 
-@attendance_routes.route('/attendance', methods=['GET','POST'])
+def db():
+    return sqlite3.connect("campus.db")
+
+@attendance_routes.route('/attendance')
 def attendance():
-    return "Attendance Working ✅"
+    conn = db()
+    cur = conn.cursor()
+    cur.execute("SELECT name, attendance FROM students")
+    data = cur.fetchall()
+    conn.close()
+
+    return render_template("attendance.html", data=data)
