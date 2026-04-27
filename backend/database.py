@@ -40,3 +40,4 @@ cur.execute("INSERT INTO users(email,password,role) VALUES('student@gmail.com','
 
 conn.commit()
 conn.close()
+print("DB Ready ✅")
