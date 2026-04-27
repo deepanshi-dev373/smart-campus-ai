@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, jsonify
 import sqlite3
 
 app = Flask(__name__)
@@ -7,7 +7,6 @@ app.secret_key = "secret123"
 def db():
     return sqlite3.connect("campus.db")
 
-# HOME
 @app.route('/')
 def home():
     return redirect('/login')
@@ -26,7 +25,6 @@ def login():
         conn.close()
 
         if user:
-            session['user'] = email
             session['role'] = user[0]
 
             if user[0] == 'admin':
@@ -36,16 +34,13 @@ def login():
             else:
                 return redirect('/student')
 
-        return "Invalid Login ❌"
+        return "Invalid Login"
 
     return render_template("login.html")
 
-# ================= ADMIN =================
+# ================= ADMIN DASHBOARD =================
 @app.route('/admin')
 def admin():
-    if session.get('role') != 'admin':
-        return redirect('/login')
-
     conn = db()
     cur = conn.cursor()
 
@@ -58,27 +53,22 @@ def admin():
     cur.execute("SELECT AVG(attendance) FROM students")
     attendance = cur.fetchone()[0] or 0
 
+    cur.execute("SELECT COUNT(*) FROM students WHERE fees=0")
+    pending_fees = cur.fetchone()[0]
+
+    cur.execute("SELECT title FROM notices ORDER BY id DESC LIMIT 3")
+    notices = cur.fetchall()
+
     conn.close()
 
-    return render_template("admin.html", students=students, teachers=teachers, attendance=attendance)
+    return render_template("admin.html",
+        students=students,
+        teachers=teachers,
+        attendance=attendance,
+        fees=pending_fees,
+        notices=notices)
 
-# ================= TEACHER =================
-@app.route('/teacher')
-def teacher():
-    if session.get('role') != 'teacher':
-        return redirect('/login')
-
-    return render_template("teacher.html")
-
-# ================= STUDENT =================
-@app.route('/student')
-def student():
-    if session.get('role') != 'student':
-        return redirect('/login')
-
-    return render_template("student.html")
-
-# ================= STUDENT MANAGEMENT =================
+# ================= STUDENTS =================
 @app.route('/students')
 def students():
     conn = db()
@@ -96,8 +86,8 @@ def add_student():
 
     conn = db()
     cur = conn.cursor()
-    cur.execute("INSERT INTO students(name,course,semester,attendance) VALUES(?,?,?,0)",
-                (name,course,semester))
+    cur.execute("INSERT INTO students(name,course,semester,attendance,fees) VALUES(?,?,?,?,?)",
+                (name,course,semester,80,1))
     conn.commit()
     conn.close()
 
@@ -126,12 +116,15 @@ def add_notice():
 
     return redirect('/notice')
 
-# ================= AI FEATURE (DEMO) =================
-@app.route('/ai_notice', methods=['POST'])
-def ai_notice():
-    topic = request.form['topic']
-    generated = f"Important Notice: {topic} will be conducted tomorrow. All students must attend."
-    return generated
+# ================= API FOR MOBILE =================
+@app.route('/api/students')
+def api_students():
+    conn = db()
+    cur = conn.cursor()
+    cur.execute("SELECT name,attendance FROM students")
+    data = cur.fetchall()
+    conn.close()
+    return jsonify(data)
 
 if __name__ == "__main__":
     app.run(debug=True)

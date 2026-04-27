@@ -20,7 +20,8 @@ id INTEGER PRIMARY KEY,
 name TEXT,
 course TEXT,
 semester TEXT,
-attendance INTEGER
+attendance INTEGER,
+fees INTEGER
 )
 """)
 
@@ -40,4 +41,4 @@ cur.execute("INSERT INTO users(email,password,role) VALUES('student@gmail.com','
 
 conn.commit()
 conn.close()
-print("DB Ready ✅")
+print("Database Ready ✅")
