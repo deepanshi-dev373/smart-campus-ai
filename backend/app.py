@@ -1,12 +1,34 @@
-from flask import Flask, render_template, request, redirect, session, jsonify
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
+import os
 
 app = Flask(__name__)
 app.secret_key = "secret123"
-
-# DB
+# ================= DB =================
 def db():
     return sqlite3.connect("campus.db")
+def create_users_table():
+    conn = db()
+    cur = conn.cursor()
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS users(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT,
+        password TEXT,
+        role TEXT
+    )
+    """)
+
+    # check first (IMPORTANT)
+    cur.execute("SELECT * FROM users")
+    if not cur.fetchall():
+        cur.execute("INSERT INTO users(email,password,role) VALUES('admin@gmail.com','123','admin')")
+        cur.execute("INSERT INTO users(email,password,role) VALUES('teacher@gmail.com','123','teacher')")
+        cur.execute("INSERT INTO users(email,password,role) VALUES('student@gmail.com','123','student')")
+
+    conn.commit()
+    conn.close()
 
 # ================= HOME =================
 @app.route('/')
@@ -95,8 +117,21 @@ def student():
 def students():
     conn=db()
     cur=conn.cursor()
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS students(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        course TEXT,
+        semester TEXT,
+        attendance INTEGER DEFAULT 0,
+        fees INTEGER DEFAULT 1
+    )
+    """)
+
     cur.execute("SELECT * FROM students")
     data=cur.fetchall()
+
     conn.close()
     return render_template("students.html",data=data)
 
@@ -108,13 +143,16 @@ def add_student():
 
     conn=db()
     cur=conn.cursor()
-    cur.execute("INSERT INTO students(name,course,semester,attendance,fees) VALUES(?,?,?,?,?)",
-                (name,course,semester,80,1))
+
+    cur.execute(
+        "INSERT INTO students(name,course,semester,attendance,fees) VALUES(?,?,?,?,?)",
+        (name,course,semester,80,1)
+    )
+
     conn.commit()
     conn.close()
     return redirect('/students')
 
-# ================= EDIT DELETE =================
 @app.route('/delete_student/<int:id>')
 def delete_student(id):
     conn=db()
@@ -123,42 +161,48 @@ def delete_student(id):
     conn.commit()
     conn.close()
     return redirect('/students')
-
-@app.route('/edit_student/<int:id>',methods=['GET','POST'])
-def edit_student(id):
-    conn=db()
-    cur=conn.cursor()
-
-    if request.method=='POST':
-        name=request.form['name']
-        cur.execute("UPDATE students SET name=? WHERE id=?",(name,id))
-        conn.commit()
-        conn.close()
-        return redirect('/students')
-
-    cur.execute("SELECT * FROM students WHERE id=?",(id,))
-    data=cur.fetchone()
-    conn.close()
-    return render_template("edit_student.html",data=data)
-
 # ================= NOTICE =================
 @app.route('/notice')
 def notice():
-    conn=db()
-    cur=conn.cursor()
+    conn = db()
+    cur = conn.cursor()
+
+    # table create (safe)
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS notices(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        content TEXT
+    )
+    """)
+
     cur.execute("SELECT * FROM notices")
-    data=cur.fetchall()
+    data = cur.fetchall()
+
     conn.close()
-    return render_template("notice.html",data=data)
-
-@app.route('/add_notice',methods=['POST'])
+    return render_template("notice.html", data=data)
+@app.route('/add_notice', methods=['POST'])
 def add_notice():
-    title=request.form['title']
-    content=request.form['content']
+    title = request.form['title']
+    content = request.form['content']
 
-    conn=db()
-    cur=conn.cursor()
-    cur.execute("INSERT INTO notices(title,content) VALUES(?,?)",(title,content))
+    conn = db()
+    cur = conn.cursor()
+
+    cur.execute(
+        "INSERT INTO notices(title, content) VALUES (?, ?)",
+        (title, content)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/notice')
+@app.route('/delete_notice/<int:id>')
+def delete_notice(id):
+    conn = db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM notices WHERE id=?", (id,))
     conn.commit()
     conn.close()
     return redirect('/notice')
@@ -180,20 +224,37 @@ def chatbot():
 
 @app.route('/ask',methods=['POST'])
 def ask():
-    msg=request.form['msg'].lower()
+    msg = request.form['msg'].lower()
 
+    # Smart responses
     if "attendance" in msg:
-        return "Your attendance is good 👍"
+        return "📊 Your attendance is around 75% 👍 Keep it up!"
+
     elif "fees" in msg:
-        return "Fees pending check karo"
-    elif "hello" in msg:
-        return "Hello 👋 I am AI Bot"
+        return "💰 Your fees status: Pending ❗ Please pay soon."
+
+    elif "hello" in msg or "hi" in msg:
+        return "👋 Hello! I am Smart Campus AI"
+
+    elif "teacher" in msg:
+        return "👨‍🏫 Teachers are available from 9AM to 4PM."
+
+    elif "event" in msg:
+        return "🎉 Upcoming Event: Hackathon 2026 🚀"
+
+    elif "notice" in msg:
+        return "📢 Check notice board for latest updates."
+
+    elif "course" in msg:
+        return "📚 Courses available: B.Tech, BCA, MBA"
+
+    elif "bye" in msg:
+        return "👋 Goodbye! Have a great day!"
+
     else:
-        return "I am Smart AI 🤖"
-
+        return "🤖 I am Smart AI — ask about attendance, fees, events etc."
 # ================= RUN =================
-import os
-
+create_users_table() 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True)
