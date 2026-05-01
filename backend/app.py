@@ -60,7 +60,43 @@ def login():
         return "Invalid Login ❌"
 
     return render_template("login.html")
+# ================= SIGNUP =================
+@app.route('/signup', methods=['GET','POST'])
+def signup():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        role = request.form['role']
 
+        conn = db()
+        cur = conn.cursor()
+
+        # table ensure
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS users(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT,
+            password TEXT,
+            role TEXT
+        )
+        """)
+
+        # check duplicate
+        cur.execute("SELECT * FROM users WHERE email=?", (email,))
+        if cur.fetchone():
+            conn.close()
+            return "User already exists ❌"
+
+        # insert new user
+        cur.execute("INSERT INTO users(email,password,role) VALUES(?,?,?)",
+                    (email,password,role))
+
+        conn.commit()
+        conn.close()
+
+        return redirect('/login')
+
+    return render_template("signup.html")
 # ================= ADMIN =================
 @app.route('/admin')
 def admin():
@@ -202,11 +238,13 @@ def add_notice():
 def delete_notice(id):
     conn = db()
     cur = conn.cursor()
+
     cur.execute("DELETE FROM notices WHERE id=?", (id,))
+
     conn.commit()
     conn.close()
-    return redirect('/notice')
 
+    return redirect('/notice')
 # ================= GRAPH =================
 @app.route('/attendance_graph')
 def attendance_graph():

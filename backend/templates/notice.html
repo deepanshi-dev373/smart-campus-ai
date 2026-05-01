@@ -68,11 +68,13 @@
         <h2>📌 Notice Board</h2>
 
         {% for n in data %}
-            <div class="card">
-                <h5>{{ n[1] }}</h5>
-                <p>{{ n[2] }}</p>
-            </div>
-        {% endfor %}
+<div class="card">
+    <h5>{{ n[1] }}</h5>
+    <p>{{ n[2] }}</p>
+
+    <a href="/delete_notice/{{ n[0] }}" class="btn btn-danger btn-sm">Delete</a>
+</div>
+{% endfor %}
     </div>
 
     <!-- ================= ADD NOTICE ================= -->
